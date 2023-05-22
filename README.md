@@ -4,7 +4,7 @@
 
 ## VKFS is a cross-platform C++ library that allows you to quickly create basic Vulkan objects for further work, such as Instance, Physical Device, Device, Command queues, Command buffer and synchronization objects.
 
-Note: The library is currently under development and may contain bugs or some missing functionality.
+Note: The library is currently under development and may contain bugs or some missing functionality. "Hello Triangle" project will be published later.
 
 ## Objects:
 
