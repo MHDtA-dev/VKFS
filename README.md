@@ -12,19 +12,25 @@ Note: The library is currently under development and may contain bugs or some mi
 The object that creates an Instance of your application.
 
 Example:
-`auto instance = new VKFS::Instance("Application Name", "Engine name", [std::vector<const char*>: instanceExtensions], [bool: enableValidationLayers], [OPTIONAL uint32_t API_VERSION=VK_API_VERSION_1_2]);`
+```cpp
+   auto instance = new VKFS::Instance("Application Name", "Engine name", [std::vector<const char*>: instanceExtensions], [bool: enableValidationLayers], [OPTIONAL uint32_t API_VERSION=VK_API_VERSION_1_2]);
+```
 
 ### Device:
 The object that picks up VkPhysicalDevice, creates VkDevice based on it, as well as command queues.
 
 Example:
-`auto device = new VKFS::Device(instance, [std::vector<const char*>: deviceExtensions]);`
+```cpp
+   auto device = new VKFS::Device(instance, [std::vector<const char*>: deviceExtensions]);
+```
 
 ### Swapchain
 An object that creates a swap chain and renderpass for it.
 
 Example:
-`auto swapchain = new VKFS::Swapchain(device, [int: windowWidth], [int: windowHeight]);`
+```cpp
+   auto swapchain = new VKFS::Swapchain(device, [int: windowWidth], [int: windowHeight]);
+```
 
 ### Descriptor
 The object that creates VkDescriptorSetLayout, VkDescriptorSet and everything necessary for this. Allows you to create a Descriptor for UBO, Sampler or Storage Buffer in just two lines.
