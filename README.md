@@ -54,3 +54,10 @@ Example:
 ```cpp
    auto vertex = new VKFS::ShaderModule(device, "path/to/spv");
 ```
+
+
+### Tested on
+|Windows| 🔜 |
+|-------|:-: |
+|MacOS  | ✔️ |
+|Linux  | 🔜 |
