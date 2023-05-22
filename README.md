@@ -31,6 +31,12 @@ The object that creates VkDescriptorSetLayout, VkDescriptorSet and everything ne
 
 Example:
 ```cpp
-   auto descriptor = new VKFS::Descriptor(device, [VkDescriptorType: descriptorType], [VkShaderStageFlagBits: shaderStage]);
+   auto descriptor = new VKFS::Descriptor(device, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, [VkShaderStageFlagBits: shaderStage]);
    descriptor->createUBOSet(sizeof(YourUBOStructure));
+```
+OR
+
+```cpp
+   auto descriptor = new VKFS::Descriptor(device, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, [VkShaderStageFlagBits: shaderStage]);
+   descriptor->createSamplerSet([VkDescriptorImageInfo: imageInfo]);
 ```
