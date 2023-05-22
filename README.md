@@ -40,3 +40,11 @@ OR
    auto descriptor = new VKFS::Descriptor(device, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, [VkShaderStageFlagBits: shaderStage]);
    descriptor->createSamplerSet([VkDescriptorImageInfo: imageInfo]);
 ```
+
+### Shader Module
+An object that allows you to conveniently load and create a VkShaderModule
+
+Example:
+```cpp
+   auto vertex = new VKFS::ShaderModule(device, "path/to/spv");
+```
