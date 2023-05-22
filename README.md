@@ -26,3 +26,10 @@ An object that creates a swap chain and renderpass for it.
 Example:
 `auto swapchain = new VKFS::Swapchain(device, [int: windowWidth], [int: windowHeight]);`
 
+### Descriptor
+The object that creates VkDescriptorSetLayout, VkDescriptorSet and everything necessary for this. Allows you to create a Descriptor for UBO, Sampler or Storage Buffer in just two lines.
+
+Example:
+```auto descriptor = new VKFS::Descriptor(device, [VkDescriptorType: descriptorType], [VkShaderStageFlagBits: shaderStage]);
+   descriptor->createUBOSet(sizeof(YourUBOStructure));
+```
