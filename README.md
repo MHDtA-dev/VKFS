@@ -60,4 +60,4 @@ Example:
 |Windows| 🔜 |
 |-------|:-: |
 |MacOS  | ✔️ |
-|Linux  | 🔜 |
+|Linux(Debian 11)  | ✔️ |
