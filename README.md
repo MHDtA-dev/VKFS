@@ -57,7 +57,8 @@ Example:
 
 
 ### Tested on
-|Windows| 🔜 |
+|Platform|Status |
 |-------|:-: |
+|Windows| 🔜 |
 |MacOS  | ✔️ |
 |Linux(Debian 11)  | ✔️ |
