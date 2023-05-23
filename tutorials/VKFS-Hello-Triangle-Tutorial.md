@@ -299,10 +299,10 @@ Pipeline createPipeline(VkShaderModule vertex, VkShaderModule fragment, VkRender
 ### Step 16. Create vertices and indices vectors
 ```cpp
     std::vector<Vertex> verices = {
-                {{-0.5f, -0.5f, 1.f}},
-                {{0.5f, -0.5f, 1.f}},
-                {{0.5f, 0.5f, 1.f}}
-        };
+                {{0.f, -1.f, 0.f}},
+                {{1.f, 1.f, 0.f}},
+                {{-1.f, 1.f, 1.f}}
+    };
     
     std::vector<uint32_t> indices = {0, 1, 2};
 ```
