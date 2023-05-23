@@ -75,5 +75,10 @@ Example:
 To build a library, use CMake:
 
 ```
-
+git clone https://github.com/MHDtA-dev/VKFS.git
+cd VKFS
+mkdir build
+cd build
+cmake -DVULKAN_INCLUDE_PATH=[Vulkan SDK include path] ..
+make
 ```
