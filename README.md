@@ -66,6 +66,14 @@ Example:
 ### Tested on
 |Platform|Status |
 |-------|:-: |
-|Windows| 🔜 |
+|Windows(MSYS2)| ✔️ |
 |MacOS  | ✔️ |
 |Linux(Debian 11)  | ✔️ |
+
+
+### Building
+To build a library, use CMake:
+
+```
+
+```
