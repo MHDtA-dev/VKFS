@@ -55,6 +55,13 @@ Example:
    auto vertex = new VKFS::ShaderModule(device, "path/to/spv");
 ```
 
+### Vertex Buffer
+This object allows you to create a buffer of vertices and indices using your vertex structure
+
+Example:
+```cpp
+   auto vb = new VKFS::VertexBuffer<YourVertexStruct>(device, [std::vector<YourVertexStruct> vertices], [std::vector<uint32_t> indices]);
+```
 
 ### Tested on
 |Platform|Status |
