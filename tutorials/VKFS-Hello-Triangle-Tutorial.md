@@ -101,7 +101,7 @@ Note: Now we are working in int main()
     auto sync = new VKFS::Synchronization(device, commandBuffer, swapchain);
 ```
 
-### Step 10. Write vertex and fragment shaders and compile it
+### Step 10. Write vertex and fragment shaders and compile them
 
 #### Vertex:
 ```glsl
