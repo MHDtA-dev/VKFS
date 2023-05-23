@@ -10,6 +10,8 @@
 - ["Hello Triangle" app](tutorials/VKFS-Hello-Triangle-Tutorial.md)
 - [Using ImGui with VKFS](tutorials/VKFS-Imgui-Tutorial.md)
 
+#### Note: These tutorials assume that you already have a working environment with a configured compiler and linked libraries.
+
 ## Brief description of objects:
 
 ### Instance:
