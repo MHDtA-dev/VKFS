@@ -1,10 +1,10 @@
-# VKFS - Vulkan Fast Setup Library
+# VKFS - Vulkan Fast Setup Framework
 
 ![Logo](logo.PNG)
 
-## VKFS is a cross-platform C++ library that allows you to quickly create basic Vulkan objects for further work, such as Instance, Physical Device, Device, Command queues, Command buffer and synchronization objects.
+## VKFS is a cross-platform C++ framework that allows you to quickly create basic Vulkan objects for further work, such as Instance, Physical Device, Device, Command queues, Command buffer and synchronization objects.
 
-Note: The library is currently under development and may contain bugs or some missing functionality. "Hello Triangle" project will be published later.
+Note: The framework is currently under development and may contain bugs or some missing functionality. "Hello Triangle" project will be published later.
 
 ## Brief description of objects:
 
@@ -72,7 +72,7 @@ Example:
 
 
 ### Building
-To build a library, use CMake:
+To build a framework, use CMake:
 
 ```
 git clone https://github.com/MHDtA-dev/VKFS.git
