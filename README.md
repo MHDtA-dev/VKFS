@@ -6,7 +6,7 @@
 
 Note: The library is currently under development and may contain bugs or some missing functionality. "Hello Triangle" project will be published later.
 
-## Objects:
+## Brief description of objects:
 
 ### Instance:
 The object that creates an Instance of your application.
