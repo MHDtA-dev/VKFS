@@ -4,8 +4,11 @@
 
 ## VKFS is a cross-platform C++ framework that allows you to quickly create basic Vulkan objects for further work, such as Instance, Physical Device, Device, Command queues, Command buffer and synchronization objects.
 
-Note: The framework is currently under development and may contain bugs or some missing functionality.
-### Take a look at the [tutorial on creating the "Hello Triangle" app](tutorials/VKFS-Hello-Triangle-Tutorial.md)
+#### Note: The framework is currently under development and may contain bugs or some missing functionality.
+
+## Tutorials:
+- ["Hello Triangle" app](tutorials/VKFS-Hello-Triangle-Tutorial.md)
+- [Using ImGui with VKFS](tutorials/VKFS-Imgui-Tutorial.md)
 
 ## Brief description of objects:
 
