@@ -8,7 +8,7 @@ Required libraries:
 - Vulkan v1.2
 - VKFS v1.0
 - SDL2 with Vulkan module
-- Dear ImGui
+- Dear ImGui with Vulkan and SDL2 implementations
 
 ### Step 1. Include all necessary libraries
 ```cpp
