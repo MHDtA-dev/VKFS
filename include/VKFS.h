@@ -13,20 +13,9 @@
 
 namespace VKFS {
 
-    uint32_t prepareFrame(Synchronization* sync) {
-        sync->waitForFences();
-        return sync->acquireNextImage();
-    }
-
-    void begin(Synchronization* sync) {
-        sync->resetAll();
-        sync->beginRecordingCommands();
-    }
-
-    void end(Synchronization* sync, uint32_t imageIndex) {
-        sync->endRecordingCommands();
-        sync->submit(imageIndex);
-    }
+    uint32_t prepareFrame(Synchronization* sync);
+    void begin(Synchronization* sync);
+    void end(Synchronization* sync, uint32_t imageIndex);
 }
 
 #endif //VKFS_VKFS_H
