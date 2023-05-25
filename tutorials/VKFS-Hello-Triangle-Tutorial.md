@@ -298,7 +298,7 @@ Pipeline createPipeline(VkShaderModule vertex, VkShaderModule fragment, VkRender
 
 ### Step 16. Create vertices and indices vectors
 ```cpp
-    std::vector<Vertex> verices = {
+    std::vector<Vertex> vertices = {
                 {{0.f, -1.f, 0.f}},
                 {{1.f, 1.f, 0.f}},
                 {{-1.f, 1.f, 1.f}}
@@ -309,7 +309,7 @@ Pipeline createPipeline(VkShaderModule vertex, VkShaderModule fragment, VkRender
 
 ### Step 17. Create Vertex buffer
 ```cpp
-    auto VB = new VKFS::VertexBuffer<Vertex>(device, verices, indices);
+    auto VB = new VKFS::VertexBuffer<Vertex>(device, vertices, indices);
 ```
 
 
