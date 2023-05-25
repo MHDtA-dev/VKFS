@@ -111,10 +111,9 @@ void VKFS::Descriptor::createSamplerSet(VkDescriptorImageInfo sampler) {
     }
 
     for (size_t i = 0; i < 2; i++) {
-        VkDescriptorImageInfo imageInfo{};
-        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = imageInfo.imageView;
-        imageInfo.sampler = imageInfo.sampler;
+        sampler.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        sampler.imageView = sampler.imageView;
+        sampler.sampler = sampler.sampler;
 
         std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
 
@@ -124,7 +123,7 @@ void VKFS::Descriptor::createSamplerSet(VkDescriptorImageInfo sampler) {
         descriptorWrites[0].dstArrayElement = 0;
         descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         descriptorWrites[0].descriptorCount = 1;
-        descriptorWrites[0].pImageInfo = &imageInfo;
+        descriptorWrites[0].pImageInfo = &sampler;
 
         vkUpdateDescriptorSets(device->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
