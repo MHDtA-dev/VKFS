@@ -61,6 +61,7 @@ Example:
    auto vertex = new VKFS::ShaderModule(device, "path/to/spv");
 ```
 
+
 ### Vertex Buffer
 This object allows you to create a buffer of vertices and indices using your vertex structure
 
@@ -68,6 +69,17 @@ Example:
 ```cpp
    auto vb = new VKFS::VertexBuffer<YourVertexStruct>(device, [std::vector<YourVertexStruct> vertices], [std::vector<uint32_t> indices]);
 ```
+
+You can also use this with Push Constants:
+```cpp
+   auto vb = new VKFS::VertexBuffer<YourVertexStruct, YourPushConstantsStruct>(device, [std::vector<YourVertexStruct> vertices], [std::vector<uint32_t> indices]);
+```
+Next, before you draw, call
+```cpp
+   vb->pushPushConstants(yourPushConstantsStruct);
+```
+
+
 
 ### Tested on
 |Platform|Status |
