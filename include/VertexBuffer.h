@@ -60,8 +60,9 @@ namespace VKFS {
                 this->layouts.push_back(set);
             }
 
-            void pushPushConstants(PushConstantsStruct consts) {
+            void pushPushConstants(PushConstantsStruct consts, VkShaderStageFlagBits shaderStage) {
                 this->pushConstants = consts;
+                this->pushConstantsShaderStage = shaderStage;
             }
 
             void draw(Synchronization* sync, VkPipelineLayout layout, VkPipeline pipeline, VkExtent2D viewportSize) {
@@ -92,7 +93,7 @@ namespace VKFS {
                 }
 
                 if (!std::is_same<PushConstantsStruct, int>::value) {
-                    vkCmdPushConstants(sync->getCommandBuffer(), layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstantsStruct), &pushConstants);
+                    vkCmdPushConstants(sync->getCommandBuffer(), layout, pushConstantsShaderStage, 0, sizeof(PushConstantsStruct), &pushConstants);
                 }
 
                 vkCmdDrawIndexed(sync->getCommandBuffer(), static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
@@ -107,6 +108,7 @@ namespace VKFS {
             VkDeviceMemory indexBufferMemory;
 
             PushConstantsStruct pushConstants;
+            VkShaderStageFlagBits pushConstantsShaderStage;
 
             std::vector<VkDescriptorSet> layouts;
 
