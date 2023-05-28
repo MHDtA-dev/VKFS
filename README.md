@@ -76,7 +76,7 @@ You can also use this with Push Constants:
 ```
 Next, before you draw, call
 ```cpp
-   vb->pushPushConstants(yourPushConstantsStruct);
+   vb->pushPushConstants(yourPushConstants);
 ```
 
 
