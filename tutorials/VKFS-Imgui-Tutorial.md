@@ -162,6 +162,9 @@ Required libraries:
                 quit = true;
             }
         }
+        
+        SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+        sync->pushWindowSize(windowWidth, windowHeight); // Pass window size to sync object every frame
 
         uint32_t imageIndex = VKFS::prepareFrame(sync); // Getting image index
         VKFS::begin(sync); // Beginning rendering
