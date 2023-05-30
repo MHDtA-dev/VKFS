@@ -12,7 +12,7 @@ VKFS::CommandBuffer::CommandBuffer(VKFS::Device *device) : device(device) {
     allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
 
     if (vkAllocateCommandBuffers(device->getDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to allocate command buffers!");
+        throw std::runtime_error("[VKFS] Failed to allocate command buffers!");
     }
 
 

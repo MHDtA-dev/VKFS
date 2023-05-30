@@ -10,7 +10,7 @@ VKFS::Device::Device(VKFS::Instance *instance, std::vector<const char*> deviceEx
     vkEnumeratePhysicalDevices(instance->getNative(), &deviceCount, nullptr);
 
     if (deviceCount == 0) {
-        throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+        throw std::runtime_error("[VKFS] Failed to find GPUs with Vulkan support!");
     }
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -24,7 +24,7 @@ VKFS::Device::Device(VKFS::Instance *instance, std::vector<const char*> deviceEx
     }
 
     if (physicalDevice == VK_NULL_HANDLE) {
-        throw std::runtime_error("Failed to find a suitable GPU!");
+        throw std::runtime_error("[VKFS] Failed to find a suitable GPU!");
     }
     VkPhysicalDeviceProperties props;
     vkGetPhysicalDeviceProperties(physicalDevice, &props);
@@ -166,7 +166,7 @@ void VKFS::Device::createLogicalDevice() {
     }
 
     if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create logical device!");
+        throw std::runtime_error("[VKFS] Failed to create logical device!");
     }
 
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
@@ -218,7 +218,7 @@ VkFormat VKFS::Device::findSupportedFormat(const std::vector<VkFormat> &candidat
         }
     }
 
-    throw std::runtime_error("Failed to find supported format!");
+    throw std::runtime_error("[VKFS] Failed to find supported format!");
 }
 
 uint32_t VKFS::Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
@@ -231,7 +231,7 @@ uint32_t VKFS::Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags
         }
     }
 
-    throw std::runtime_error("Failed to find suitable memory type!");
+    throw std::runtime_error("[VKFS] Failed to find suitable memory type!");
 }
 
 void VKFS::Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
@@ -243,7 +243,7 @@ void VKFS::Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create buffer!");
+        throw std::runtime_error("[VKFS] Failed to create buffer!");
     }
 
     VkMemoryRequirements memRequirements;
@@ -255,7 +255,7 @@ void VKFS::Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
     allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
     if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate buffer memory!");
+        throw std::runtime_error("[VKFS] Failed to allocate buffer memory!");
     }
 
     vkBindBufferMemory(device, buffer, bufferMemory, 0);
@@ -270,7 +270,7 @@ void VKFS::Device::createCommandPool() {
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
     if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create graphics command pool!");
+        throw std::runtime_error("[VKFS] Failed to create graphics command pool!");
     }
 }
 

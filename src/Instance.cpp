@@ -69,7 +69,7 @@ VKFS::Instance::Instance(std::string appName, std::string engineName, std::vecto
     }
 
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create instance!");
+        throw std::runtime_error("[VKFS] Failed to create instance!");
     }
 
     if (useDebug) {
@@ -106,7 +106,7 @@ void VKFS::Instance::setupDebugMessenger() {
     populateDebugMessengerCreateInfo(createInfo);
 
     if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-        throw std::runtime_error("failed to set up debug messenger!");
+        throw std::runtime_error("[VKFS] Failed to set up debug messenger!");
     }
 }
 
