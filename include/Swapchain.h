@@ -37,7 +37,7 @@ namespace VKFS {
 
             VkRenderPass getRenderPass();
             VkSwapchainKHR getSwapchain();
-            void recreate();
+            void recreate(int windowWidth, int windowHeight);
             VkFramebuffer getFramebuffer(uint32_t imageIndex);
             VkExtent2D getExtent();
 
@@ -63,6 +63,7 @@ namespace VKFS {
             VkRenderPass renderPass;
 
             int windowWidth, windowHeight;
+            void create();
     };
 
 }

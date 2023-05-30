@@ -47,6 +47,8 @@ namespace VKFS {
             void beginRecordingCommands();
             void endRecordingCommands();
 
+            void pushWindowSize(int width, int height);
+
         private:
             Device* device;
             CommandBuffer* cmd;
@@ -56,6 +58,8 @@ namespace VKFS {
             std::vector<VkSemaphore> renderFinishedSemaphores;
             std::vector<VkFence> inFlightFences;
             uint32_t currentFrame = 0;
+
+            int windowWidth = -1, windowHeight = -1;
     };
 
 }

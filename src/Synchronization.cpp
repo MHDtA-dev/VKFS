@@ -30,7 +30,7 @@ uint32_t VKFS::Synchronization::acquireNextImage() {
     VkResult result = vkAcquireNextImageKHR(device->getDevice(), swapchain->getSwapchain(), UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-        swapchain->recreate();
+        swapchain->recreate(windowWidth, windowHeight);
         return -1;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
         throw std::runtime_error("[VKFS] Failed to acquire swap chain image!");
@@ -49,6 +49,11 @@ void VKFS::Synchronization::resetAll() {
 }
 
 void VKFS::Synchronization::submit(uint32_t imageIndex) {
+
+    if (windowWidth == -1 or windowHeight == -1) {
+        throw std::runtime_error("[VKFS] The window size must be passed to the Sync object using the pushWindowSize() method every frame!");
+    }
+
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -84,7 +89,7 @@ void VKFS::Synchronization::submit(uint32_t imageIndex) {
     VkResult result = vkQueuePresentKHR(device->getPresentQueue(), &presentInfo);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-        swapchain->recreate();
+        swapchain->recreate(windowWidth, windowHeight);
     } else if (result != VK_SUCCESS) {
         throw std::runtime_error("[VKFS] Failed to present swap chain image!");
     }
@@ -109,4 +114,9 @@ void VKFS::Synchronization::endRecordingCommands() {
 
 uint32_t VKFS::Synchronization::getCurrentFrame() {
     return this->currentFrame;
+}
+
+void VKFS::Synchronization::pushWindowSize(int width, int height) {
+    this->windowWidth = width;
+    this->windowHeight = height;
 }
