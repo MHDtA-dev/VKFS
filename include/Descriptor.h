@@ -37,9 +37,10 @@ namespace VKFS {
             Descriptor(Device* device, VkDescriptorType type, VkShaderStageFlagBits shaderStage);
 
             void createUBOSet(unsigned int sizeOf);
+            void createStorageBufferSet(unsigned int sizeOf);
             void createSamplerSet(VkDescriptorImageInfo sampler);
 
-            void* getUBOforUpdate(Synchronization* sync);
+            void* getBufferForUpdate(Synchronization* sync);
             VkDescriptorSet getSet(Synchronization* sync);
 
             VkDescriptorSetLayout getDescriptorSetLayout();

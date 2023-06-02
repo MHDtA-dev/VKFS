@@ -129,10 +129,56 @@ void VKFS::Descriptor::createSamplerSet(VkDescriptorImageInfo sampler) {
     }
 }
 
-void *VKFS::Descriptor::getUBOforUpdate(VKFS::Synchronization *sync) {
+void *VKFS::Descriptor::getBufferForUpdate(VKFS::Synchronization *sync) {
     return this->uniformBuffersMapped[sync->getCurrentFrame()];
 }
 
 VkDescriptorSet VKFS::Descriptor::getSet(VKFS::Synchronization *sync) {
     return this->descriptorSets[sync->getCurrentFrame()];
+}
+
+void VKFS::Descriptor::createStorageBufferSet(unsigned int sizeOf) {
+    VkDeviceSize bufferSize = sizeOf * 1000;
+
+    uniformBuffers.resize(2);
+    uniformBuffersMemory.resize(2);
+    uniformBuffersMapped.resize(2);
+
+    for (size_t i = 0; i < 2; i++) {
+        device->createBuffer(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
+
+        vkMapMemory(device->getDevice(), uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
+    }
+
+
+    std::vector<VkDescriptorSetLayout> layouts(2, descriptorSetLayout);
+    VkDescriptorSetAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = descriptorPool;
+    allocInfo.descriptorSetCount = static_cast<uint32_t>(2);
+    allocInfo.pSetLayouts = layouts.data();
+
+    descriptorSets.resize(2);
+    if (vkAllocateDescriptorSets(device->getDevice(), &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
+        throw std::runtime_error("[VKFS] Failed to allocate descriptor sets!");
+    }
+
+    for (size_t i = 0; i < 2; i++) {
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = uniformBuffers[i];
+        bufferInfo.offset = 0;
+        bufferInfo.range = sizeOf * 1000;
+
+        std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = descriptorSets[i];
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(device->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+    }
 }
