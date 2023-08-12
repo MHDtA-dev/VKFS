@@ -75,7 +75,7 @@ Example:
    ...
    pipeline->addShader([type: VKFS::ShaderType], [vertexShader: VKFS::ShaderModule*]); // You can add vertex, fragment and geometry shaders to pipeline
 
-   pipeline->build() // Build the pipeline
+   pipeline->build(); // Build the pipeline
 ```
 
 After building you can get your ready to use objects:
@@ -84,7 +84,7 @@ After building you can get your ready to use objects:
    pipeline->getPipeline(); // Returns VkPipeline
 ```
 
-You can also set some additional parameters(before ```pipeline->build()```):
+You can also set some additional parameters(before ```pipeline->build();```):
 ```cpp
    pipeline->enablePushConstants(sizeof(YourPushConstantsStruct), [shaderType: VKFS::ShaderType]); // Enables push constants for your pipeline.
    pipeline->enableDepthTest([state: bool]); // Enables or disables depth test. Enabled by default
