@@ -73,7 +73,7 @@ Example:
    pipeline->addShader(VKFS::VERTEX, vertex);
    pipeline->addShader(VKFS::FRAGMENT, fragment);
    ...
-   pipeline->addShader([type: VKFS::ShaderType], [vertexShader: VKFS::Shader*]); // You can add vertex, fragment and geometry shaders to pipeline
+   pipeline->addShader([type: VKFS::ShaderType], [vertexShader: VKFS::ShaderModule*]); // You can add vertex, fragment and geometry shaders to pipeline
 
    pipeline->build() // Build the pipeline
 ```
