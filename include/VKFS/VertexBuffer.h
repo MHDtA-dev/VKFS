@@ -39,7 +39,6 @@ namespace VKFS {
         public:
             std::vector<Vertex> vertices;
             std::vector<uint32_t> indices;
-
             VertexBuffer(Device *device, std::vector<Vertex> vertices, std::vector<uint32_t> indices) : device(device) {
                 this->vertices = vertices;
                 this->indices = indices;
@@ -153,8 +152,6 @@ namespace VKFS {
             }
 
     };
-
-
 
 
 }

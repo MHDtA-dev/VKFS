@@ -35,6 +35,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Swapchain.h"
 #include "Synchronization.h"
 #include "VertexBuffer.h"
+#include "Pipeline.h"
 
 namespace VKFS {
 

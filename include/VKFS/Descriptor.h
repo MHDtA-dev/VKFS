@@ -29,12 +29,30 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Device.h"
 #include "Synchronization.h"
 #include <array>
+#include <deque>
 
 namespace VKFS {
 
     class Descriptor {
         public:
             Descriptor(Device* device, VkDescriptorType type, VkShaderStageFlagBits shaderStage);
+            ~Descriptor();
+
+            struct ClearQueue {
+                std::deque<std::function<void()>> deletors;
+
+                void push_function(std::function<void()> &&function) {
+                    deletors.push_back(function);
+                }
+
+                void flush() {
+                    for (auto it = deletors.rbegin(); it != deletors.rend(); it++) {
+                        (*it)(); //call functors
+                    }
+
+                    deletors.clear();
+                }
+            };
 
             void createUBOSet(unsigned int sizeOf);
             void createStorageBufferSet(unsigned int sizeOf);
@@ -47,6 +65,7 @@ namespace VKFS {
             VkDescriptorPool getDescriptorPool();
         private:
             Device* device;
+            ClearQueue clearQueue;
 
             VkDescriptorSetLayout descriptorSetLayout;
             VkDescriptorPool descriptorPool;

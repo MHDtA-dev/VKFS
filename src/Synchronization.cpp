@@ -1,4 +1,4 @@
-#include "../include/Synchronization.h"
+#include "../include/VKFS/Synchronization.h"
 
 VKFS::Synchronization::Synchronization(VKFS::Device *device, VKFS::CommandBuffer *cmd, Swapchain* swapchain) : device(device), cmd(cmd), swapchain(swapchain) {
     imageAvailableSemaphores.resize(2);
@@ -33,7 +33,7 @@ uint32_t VKFS::Synchronization::acquireNextImage() {
         swapchain->recreate(windowWidth, windowHeight);
         return -1;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-        throw std::runtime_error("[VKFS] Failed to acquire swap chain image!");
+        throw std::runtime_error("[VKFS] Failed to acquire swapchain image!");
     }
 
     return imageIndex;

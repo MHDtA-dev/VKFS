@@ -1,6 +1,6 @@
 
 
-#include "../include/CommandBuffer.h"
+#include "../include/VKFS/CommandBuffer.h"
 
 VKFS::CommandBuffer::CommandBuffer(VKFS::Device *device) : device(device) {
     commandBuffers.resize(2);

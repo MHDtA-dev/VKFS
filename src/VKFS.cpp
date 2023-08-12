@@ -2,7 +2,7 @@
 // Created by Alexander Blinov on 24.05.2023.
 //
 
-#include "../include/VKFS.h"
+#include "../include/VKFS/VKFS.h"
 
 uint32_t VKFS::prepareFrame(Synchronization* sync) {
     sync->waitForFences();

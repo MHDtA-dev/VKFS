@@ -1,6 +1,6 @@
 
 
-#include "../include/ShaderModule.h"
+#include "../include/VKFS/ShaderModule.h"
 
 VKFS::ShaderModule::ShaderModule(VKFS::Device *device, std::string path) : device(device) {
     auto code = readFile(path);

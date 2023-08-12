@@ -34,7 +34,6 @@ namespace VKFS {
     class Swapchain {
         public:
             Swapchain(Device* device, int windowWidth, int windowHeight);
-
             VkRenderPass getRenderPass();
             VkSwapchainKHR getSwapchain();
             void recreate(int windowWidth, int windowHeight);

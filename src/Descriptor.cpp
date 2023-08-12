@@ -2,7 +2,7 @@
 // Created by Alexander Blinov on 22.05.2023.
 //
 
-#include "../include/Descriptor.h"
+#include "../include/VKFS/Descriptor.h"
 
 VKFS::Descriptor::Descriptor(VKFS::Device *device, VkDescriptorType type, VkShaderStageFlagBits shaderStage) : device(device) {
 
@@ -25,6 +25,10 @@ VKFS::Descriptor::Descriptor(VKFS::Device *device, VkDescriptorType type, VkShad
         throw std::runtime_error("[VKFS] Failed to create descriptor set layout!");
     }
 
+    clearQueue.push_function([=] () {
+        vkDestroyDescriptorSetLayout(device->getDevice(), descriptorSetLayout, nullptr);
+    });
+
     // Create pool
 
     std::array<VkDescriptorPoolSize, 1> poolSizes{};
@@ -33,6 +37,7 @@ VKFS::Descriptor::Descriptor(VKFS::Device *device, VkDescriptorType type, VkShad
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
     poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = static_cast<uint32_t>(2);
@@ -41,6 +46,9 @@ VKFS::Descriptor::Descriptor(VKFS::Device *device, VkDescriptorType type, VkShad
         throw std::runtime_error("[VKFS] Failed to create descriptor pool!");
     }
 
+    clearQueue.push_function([=] () {
+        vkDestroyDescriptorPool(device->getDevice(), descriptorPool, nullptr);
+    });
 }
 
 VkDescriptorSetLayout VKFS::Descriptor::getDescriptorSetLayout() {
@@ -60,9 +68,15 @@ void VKFS::Descriptor::createUBOSet(unsigned int sizeOf) {
 
     for (size_t i = 0; i < 2; i++) {
         device->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
-
         vkMapMemory(device->getDevice(), uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
     }
+
+    clearQueue.push_function([=] () {
+        for (size_t i = 0; i < 2; i++) {
+            vkFreeMemory(device->getDevice(), uniformBuffersMemory[i], nullptr);
+            vkDestroyBuffer(device->getDevice(), uniformBuffers[i], nullptr);
+        }
+    });
 
 
     std::vector<VkDescriptorSetLayout> layouts(2, descriptorSetLayout);
@@ -76,6 +90,10 @@ void VKFS::Descriptor::createUBOSet(unsigned int sizeOf) {
     if (vkAllocateDescriptorSets(device->getDevice(), &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("[VKFS] Failed to allocate descriptor sets!");
     }
+
+    clearQueue.push_function([=] () {
+        vkFreeDescriptorSets(device->getDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+    });
 
     for (size_t i = 0; i < 2; i++) {
         VkDescriptorBufferInfo bufferInfo{};
@@ -109,6 +127,10 @@ void VKFS::Descriptor::createSamplerSet(VkDescriptorImageInfo sampler) {
     if (vkAllocateDescriptorSets(device->getDevice(), &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("[VKFS] Failed to allocate descriptor sets!");
     }
+
+    clearQueue.push_function([=] () {
+        vkFreeDescriptorSets(device->getDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+    });
 
     for (size_t i = 0; i < 2; i++) {
         sampler.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -146,10 +168,15 @@ void VKFS::Descriptor::createStorageBufferSet(unsigned int sizeOf) {
 
     for (size_t i = 0; i < 2; i++) {
         device->createBuffer(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
-
         vkMapMemory(device->getDevice(), uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
     }
 
+    clearQueue.push_function([=] () {
+        for (size_t i = 0; i < 2; i++) {
+            vkFreeMemory(device->getDevice(), uniformBuffersMemory[i], nullptr);
+            vkDestroyBuffer(device->getDevice(), uniformBuffers[i], nullptr);
+        }
+    });
 
     std::vector<VkDescriptorSetLayout> layouts(2, descriptorSetLayout);
     VkDescriptorSetAllocateInfo allocInfo{};
@@ -162,6 +189,10 @@ void VKFS::Descriptor::createStorageBufferSet(unsigned int sizeOf) {
     if (vkAllocateDescriptorSets(device->getDevice(), &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("[VKFS] Failed to allocate descriptor sets!");
     }
+
+    clearQueue.push_function([=] () {
+        vkFreeDescriptorSets(device->getDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+    });
 
     for (size_t i = 0; i < 2; i++) {
         VkDescriptorBufferInfo bufferInfo{};
@@ -181,4 +212,8 @@ void VKFS::Descriptor::createStorageBufferSet(unsigned int sizeOf) {
 
         vkUpdateDescriptorSets(device->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
+}
+
+VKFS::Descriptor::~Descriptor() {
+    clearQueue.flush();
 }

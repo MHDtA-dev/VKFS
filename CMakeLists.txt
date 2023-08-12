@@ -12,5 +12,5 @@ endif ()
 
 include_directories(${VULKAN_INCLUDE_PATH})
 
-add_library(VKFS src/Instance.cpp include/Instance.h src/Device.cpp include/Device.h src/Swapchain.cpp include/Swapchain.h src/ShaderModule.cpp include/ShaderModule.h src/CommandBuffer.cpp include/CommandBuffer.h src/Synchronization.cpp include/Synchronization.h include/VKFS.h src/VertexBuffer.cpp include/VertexBuffer.h src/Descriptor.cpp include/Descriptor.h src/VKFS.cpp)
+add_library(VKFS src/Instance.cpp include/VKFS/Instance.h src/Device.cpp include/VKFS/Device.h src/Swapchain.cpp include/VKFS/Swapchain.h src/ShaderModule.cpp include/VKFS/ShaderModule.h src/CommandBuffer.cpp include/VKFS/CommandBuffer.h src/Synchronization.cpp include/VKFS/Synchronization.h include/VKFS/VKFS.h src/VertexBuffer.cpp include/VKFS/VertexBuffer.h src/Descriptor.cpp include/VKFS/Descriptor.h src/VKFS.cpp src/Pipeline.cpp include/VKFS/Pipeline.h)
 target_link_libraries(VKFS vulkan)

@@ -1,7 +1,7 @@
 
 
 #include <utility>
-#include "../include/Device.h"
+#include "../include/VKFS/Device.h"
 
 VKFS::Device::Device(VKFS::Instance *instance, std::vector<const char*> deviceExtensions) {
     this->instance = instance;
