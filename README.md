@@ -138,6 +138,7 @@ make
 - [ ] "Context" class
 - [ ] Offscreen Renderer class
 - [ ] Screen post processing rect class
+- [ ] Objects cleanup
 
 ### EXTENSIONS TODO
 - [ ] Text renderer class
