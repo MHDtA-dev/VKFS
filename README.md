@@ -113,7 +113,7 @@ Next, before you draw, call
 ```
 
 ### Image
-This object allows you quickly upload image to Vulkan and use it in the future
+This object allows you to quickly upload image to Vulkan and use it in the future
 
 Example:
 ```cpp
@@ -162,7 +162,7 @@ without causing any errors. Include extensions: `#include <VKFS_Extensions.h>`
 ### VKFS_EXT_SHAPE_CONSTRUCTOR:
 Allows you to quickly create vertices and indexes to them of shapes such as sphere, cube, pyramid, cylinder and cone. At the moment, this extension is still in development
 
-
+## General Info:
 
 ### Tested on
 |Platform|Status |
@@ -187,9 +187,11 @@ make
 ### TODO
 - [ ] "Context" class
 - [x] Offscreen Renderer class
+- [x] Images
 - [ ] Screen post processing rect class
 - [ ] Objects cleanup
 
 ### EXTENSIONS TODO
+- [ ] Shape Constructor
 - [ ] Text renderer class
 - [ ] Model importing via assimp
