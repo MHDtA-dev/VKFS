@@ -20,27 +20,9 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef VKFS_VKFS_EXTENSIONS_H
+#define VKFS_VKFS_EXTENSIONS_H
 
-#ifndef VKFS_VKFS_H
-#define VKFS_VKFS_H
+#include "Extensions/ShapeConstructor.h"
 
-#include "CommandBuffer.h"
-#include "Device.h"
-#include "Descriptor.h"
-#include "Instance.h"
-#include "ShaderModule.h"
-#include "Swapchain.h"
-#include "Synchronization.h"
-#include "VertexBuffer.h"
-#include "Pipeline.h"
-#include "Offscreen.h"
-#include "Image.h"
-
-namespace VKFS {
-
-    uint32_t prepareFrame(Synchronization* sync);
-    void begin(Synchronization* sync);
-    void end(Synchronization* sync, uint32_t imageIndex);
-}
-
-#endif //VKFS_VKFS_H
+#endif //VKFS_VKFS_EXTENSIONS_H
