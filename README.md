@@ -112,12 +112,62 @@ Next, before you draw, call
    vb->pushPushConstants(yourPushConstants);
 ```
 
+### Image
+This object allows you quickly upload image to Vulkan and use it in the future
+
+Example:
+```cpp
+   auto image = new VKFS::Image(device, [imageWidth: int], [imageHeight: int], [pixelsRGBA32: void*], [generateMipMaps = true: bool], [imageFilter = VKFS::Linear: VKFS::ImageFilter]);
+
+   image->getDescriptorImageInfo(); // Returns VkDescriptorImageInfo of created image
+   image->getImage(); // Returns VkImage
+   image->getImageView(); // Returns VkImageView
+   image->getSampler(); // Returns VkSampler
+   image->getMipLevels(); // Returns mipmap levels as uint32_t
+
+```
+
+You can also create descriptor for image:
+
+```cpp
+   auto imageDescriptor = VKFS::Descriptor(device, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+   imageDescriptor->createSamplerSet(image->getDescriptorImageInfo());
+
+   // To get VkDescriptorSet for current frame use
+   VkDescriptorSet setForShader = imageDescriptor->getSet(sync);
+
+```
+
+Example of uploading image using `SDL_image.h` module:
+
+```cpp
+
+    SDL_Surface* image = IMG_Load("path/to/image.jpg");
+    image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0); // Strictly use RGBA32 format
+    void* pixels = image->pixels;
+    int width = image->w;
+    int height = image->h;
+
+   auto vulkanImage = new VKFS::Image(device, width, height, pixels);
+   auto imageDescriptor = VKFS::Descriptor(device, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+   imageDescriptor->createSamplerSet(vulkanImage->getDescriptorImageInfo());
+
+```
+
+## Extensions:
+
+Extensions are an additional module to the main functionality of the framework. They can be removed from the project 
+without causing any errors. Include extensions: `#include <VKFS_Extensions.h>`
+
+### VKFS_EXT_SHAPE_CONSTRUCTOR:
+Allows you to quickly create vertices and indexes to them of shapes such as sphere, cube, pyramid, cylinder and cone. At the moment, this extension is still in development
+
 
 
 ### Tested on
 |Platform|Status |
 |-------|:-: |
-|Windows(MSYS2)| ✔️ |
+|Windows(MSYS2 MinGW64)| ✔️ |
 |MacOS  | ✔️ |
 |Linux(Debian 11)  | ✔️ |
 
@@ -136,7 +186,7 @@ make
 
 ### TODO
 - [ ] "Context" class
-- [ ] Offscreen Renderer class
+- [x] Offscreen Renderer class
 - [ ] Screen post processing rect class
 - [ ] Objects cleanup
 
