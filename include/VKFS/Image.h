@@ -25,6 +25,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include <vulkan/vulkan.h>
 #include "Device.h"
 
