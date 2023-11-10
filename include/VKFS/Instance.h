@@ -28,11 +28,14 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cstring>
 #include <vulkan/vulkan.h>
 
+#include "__utils.h"
+
 namespace VKFS {
 
     class Instance {
         public:
             Instance(std::string appName, std::string engineName, std::vector<const char*> instanceExtensions, bool enableValidationLayers, uint32_t APIVersion = VK_API_VERSION_1_2);
+            ~Instance();
 
             void setSurface(VkSurfaceKHR surface);
             VkSurfaceKHR getSurface();
@@ -45,6 +48,7 @@ namespace VKFS {
             };
 
         private:
+            ClearQueue clearQueue;
             VkInstance instance;
             VkDebugUtilsMessengerEXT debugMessenger;
             VkSurfaceKHR surface;

@@ -169,6 +169,10 @@ void VKFS::Device::createLogicalDevice() {
         throw std::runtime_error("[VKFS] Failed to create logical device!");
     }
 
+    clearQueue.push_function([=] () {
+        vkDestroyDevice(device, nullptr);
+    });
+
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 }
@@ -320,3 +324,8 @@ void VKFS::Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSi
 
     endSingleTimeCommands(commandBuffer);
 }
+
+VKFS::Device::~Device() {
+    clearQueue.flush();
+}
+

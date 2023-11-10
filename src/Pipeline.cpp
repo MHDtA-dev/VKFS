@@ -22,10 +22,14 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "../include/VKFS/Pipeline.h"
 
-VKFS::Pipeline::Pipeline(VKFS::Device *device, VkVertexInputBindingDescription bindingDescription, std::vector<VkVertexInputAttributeDescription> attribDescription, VkRenderPass renderPass, std::vector<Descriptor*> descriptors) : d(device), renderPass(renderPass) {
+VKFS::Pipeline::Pipeline(VKFS::Device *device, VkVertexInputBindingDescription bindingDescription, std::vector<VkVertexInputAttributeDescription> attribDescription, VkRenderPass renderPass, std::vector<Descriptor*> descriptors, int colorAttachmentsCount) : d(device), colorAttachmentsCount(colorAttachmentsCount), renderPass(renderPass) {
     attributes = attribDescription;
     bindings = bindingDescription;
     this->descriptors = descriptors;
+
+    if (colorAttachmentsCount < 0) {
+        throw std::invalid_argument("[VKFS] Color attachments count must be >= 0!");
+    }
 }
 
 void VKFS::Pipeline::addShader(VKFS::ShaderType type, VKFS::ShaderModule *shader, std::string funcname) {
@@ -101,25 +105,30 @@ void VKFS::Pipeline::build() {
     depthStencil.depthBoundsTestEnable = VK_FALSE;
     depthStencil.stencilTestEnable = VK_FALSE;
 
-    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-    colorBlendAttachment.blendEnable = (alphaChannel ? VK_TRUE : VK_FALSE);
+    std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+    colorBlendAttachments.resize(colorAttachmentsCount);
 
-    if (alphaChannel) {
-        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    for (int i = 0; i < colorAttachmentsCount; i++) {
+        colorBlendAttachments[i].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachments[i].blendEnable = (alphaChannel ? VK_TRUE : VK_FALSE);
+
+        if (alphaChannel) {
+            colorBlendAttachments[i].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+            colorBlendAttachments[i].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            colorBlendAttachments[i].colorBlendOp = VK_BLEND_OP_ADD;
+            colorBlendAttachments[i].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+            colorBlendAttachments[i].dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            colorBlendAttachments[i].alphaBlendOp = VK_BLEND_OP_ADD;
+        }
     }
+
 
     VkPipelineColorBlendStateCreateInfo colorBlending{};
     colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     colorBlending.logicOpEnable = VK_FALSE;
     colorBlending.logicOp = VK_LOGIC_OP_COPY;
-    colorBlending.attachmentCount = 1;
-    colorBlending.pAttachments = &colorBlendAttachment;
+    colorBlending.attachmentCount = colorAttachmentsCount;
+    colorBlending.pAttachments = colorBlendAttachments.data();
     colorBlending.blendConstants[0] = 0.0f;
     colorBlending.blendConstants[1] = 0.0f;
     colorBlending.blendConstants[2] = 0.0f;
@@ -163,6 +172,10 @@ void VKFS::Pipeline::build() {
         throw std::runtime_error("[VKFS] Failed to create pipeline layout!");
     }
 
+    clearQueue.push_function([=] () {
+        vkDestroyPipelineLayout(d->getDevice(), layout, nullptr);
+    });
+
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = stages.size();
@@ -173,7 +186,7 @@ void VKFS::Pipeline::build() {
     pipelineInfo.pRasterizationState = &rasterizer;
     pipelineInfo.pMultisampleState = &multisampling;
     pipelineInfo.pDepthStencilState = &depthStencil;
-    pipelineInfo.pColorBlendState = &colorBlending;
+    pipelineInfo.pColorBlendState = (colorAttachmentsCount >= 1 ? &colorBlending : nullptr);
     pipelineInfo.pDynamicState = &dynamicState;
     pipelineInfo.layout = layout;
     pipelineInfo.renderPass = renderPass;
@@ -195,6 +208,10 @@ void VKFS::Pipeline::build() {
     if (vkCreateGraphicsPipelines(d->getDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS) {
         throw std::runtime_error("[VKFS] Failed to create graphics pipeline!");
     }
+
+    clearQueue.push_function([=] () {
+        vkDestroyPipeline(d->getDevice(), pipeline, nullptr);
+    });
 }
 
 void VKFS::Pipeline::enablePushConstants(size_t sizeOf, ShaderType shader) {
@@ -226,5 +243,9 @@ void VKFS::Pipeline::setPolygonMode(VKFS::PolygonMode mode) {
 
 void VKFS::Pipeline::enableAlphaChannel(bool state) {
     alphaChannel = state;
+}
+
+VKFS::Pipeline::~Pipeline() {
+    clearQueue.flush();
 }
 

@@ -24,6 +24,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #define VKFS_DEVICE_H
 
 #include "Instance.h"
+#include "__utils.h"
 #include <optional>
 #include <set>
 
@@ -47,6 +48,7 @@ namespace VKFS {
     class Device {
         public:
             Device(VKFS::Instance* instance, std::vector<const char*> deviceExtensions);
+            ~Device();
 
             VkPhysicalDevice getPhysicalDevice();
             VkDevice getDevice();
@@ -70,6 +72,7 @@ namespace VKFS {
         private:
             Instance* instance;
             std::vector<const char*> deviceExtensions;
+            ClearQueue clearQueue;
 
             VkPhysicalDevice physicalDevice;
             VkDevice device;

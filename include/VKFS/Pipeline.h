@@ -30,29 +30,16 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Device.h"
 #include "ShaderModule.h"
 #include "Descriptor.h"
+#include "__utils.h"
 
 
 namespace VKFS {
 
-    enum ShaderType {
-        VERTEX, FRAGMENT, GEOMETRY
-    };
-
-    enum CullMode {
-        FRONT, BACK, NONE
-    };
-
-    enum Attachment {
-        COLOR, DEPTH
-    };
-
-    enum PolygonMode {
-        FILL, LINE, POINT
-    };
-
     class Pipeline {
         public:
-            Pipeline(Device* device, VkVertexInputBindingDescription bindingDescription, std::vector<VkVertexInputAttributeDescription> attribDescription, VkRenderPass renderpass, std::vector<Descriptor*> descriptors);
+            Pipeline(Device* device, VkVertexInputBindingDescription bindingDescription, std::vector<VkVertexInputAttributeDescription> attribDescription, VkRenderPass renderpass, std::vector<Descriptor*> descriptors, int colorAttachmentsCount = 1);
+            ~Pipeline();
+
             void addShader(ShaderType type, ShaderModule* shader, std::string funcname = "main");
             void enablePushConstants(size_t sizeOf, ShaderType shader);
             void enableDepthTest(bool state);
@@ -61,18 +48,20 @@ namespace VKFS {
             void disableAttachment(Attachment att);
             void setPolygonMode(PolygonMode mode);
             void enableAlphaChannel(bool state);
-            void build();
+            virtual void build();
 
             VkPipeline getPipeline();
             VkPipelineLayout getPipelineLayout();
 
-        private:
+        protected:
             Device* d;
             VkVertexInputBindingDescription bindingDesc;
             std::vector<VkPipelineShaderStageCreateInfo> stages;
             std::vector<VkVertexInputAttributeDescription> attributes;
             VkVertexInputBindingDescription bindings;
             static VkShaderStageFlagBits getVulkanStage(ShaderType type);
+
+            ClearQueue clearQueue;
 
             VkPipeline pipeline;
             VkPipelineLayout layout;
@@ -95,6 +84,8 @@ namespace VKFS {
             PolygonMode polygonMode = PolygonMode::FILL;
 
             bool alphaChannel = false;
+
+            int colorAttachmentsCount = 0;
     };
 
 }

@@ -28,6 +28,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <array>
 #include <deque>
 #include <functional>
+#include "__utils.h"
 
 namespace VKFS {
 
@@ -35,22 +36,6 @@ namespace VKFS {
         public:
             Descriptor(Device* device, VkDescriptorType type, VkShaderStageFlagBits shaderStage);
             ~Descriptor();
-
-            struct ClearQueue {
-                std::deque<std::function<void()>> deletors;
-
-                void push_function(std::function<void()> &&function) {
-                    deletors.push_back(function);
-                }
-
-                void flush() {
-                    for (auto it = deletors.rbegin(); it != deletors.rend(); it++) {
-                        (*it)(); //call functors
-                    }
-
-                    deletors.clear();
-                }
-            };
 
             void createUBOSet(unsigned int sizeOf);
             void createStorageBufferSet(unsigned int sizeOf);

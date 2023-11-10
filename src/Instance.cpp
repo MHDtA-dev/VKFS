@@ -72,6 +72,10 @@ VKFS::Instance::Instance(std::string appName, std::string engineName, std::vecto
         throw std::runtime_error("[VKFS] Failed to create instance!");
     }
 
+    clearQueue.push_function([=] () {
+        vkDestroyInstance(instance, nullptr);
+    });
+
     if (useDebug) {
         setupDebugMessenger();
     }
@@ -120,6 +124,10 @@ VKFS::Instance::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugU
     } else {
         return VK_ERROR_EXTENSION_NOT_PRESENT;
     }
+
+    clearQueue.push_function([=] () {
+        vkDestroyDebugUtilsMessengerEXT(instance, *pDebugMessenger, nullptr);
+    });
 }
 
 void VKFS::Instance::setSurface(VkSurfaceKHR surface) {
@@ -128,5 +136,9 @@ void VKFS::Instance::setSurface(VkSurfaceKHR surface) {
 
 VkSurfaceKHR VKFS::Instance::getSurface() {
     return this->surface;
+}
+
+VKFS::Instance::~Instance() {
+    clearQueue.flush();
 }
 

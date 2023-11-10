@@ -28,21 +28,22 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vulkan/vulkan.h>
 #include "Device.h"
 #include "Synchronization.h"
+#include "__utils.h"
 
 
 namespace VKFS {
 
-    enum OffscreenType {
-        OFFSCR_COLOR, OFFSCR_DEPTH, OFFSCR_COLOR_AND_DEPTH
-    };
-
-    enum OffscreenImageFilter {
-        OFFSCR_LINEAR, OFFSRC_NEAREST
+    struct __OffscreenImage {
+        VkImage image;
+        VkDeviceMemory imageMemory;
+        VkImageView imageView;
+        VkDescriptorImageInfo imageInfo;
     };
 
     class Offscreen {
         public:
-            Offscreen(Device* device, Synchronization* sync, OffscreenType type, int width, int height, OffscreenImageFilter imageFilter = OffscreenImageFilter::OFFSCR_LINEAR);
+            Offscreen(Device* device, Synchronization* sync, int colorAttachmentsCount, bool enableDepthAttachment, int width, int height, OffscreenImageFilter imageFilter = OffscreenImageFilter::OFFSCR_LINEAR);
+            ~Offscreen();
 
             void beginRenderpass(float clearR = 0, float clearG = 0, float clearB = 0, float clearA = 0);
             void endRenderpass();
@@ -51,20 +52,22 @@ namespace VKFS {
             VkExtent2D getExtent();
             VkFramebuffer getFramebuffer();
             VkSampler getSampler();
-            VkDescriptorImageInfo getImageInfo();
+            VkDescriptorImageInfo getImageInfo(int attachmentIndex = 0);
 
         private:
             Device* d;
-            OffscreenType t;
             OffscreenImageFilter filter;
             Synchronization* sync;
+
+            ClearQueue clearQueue;
 
             int w, h;
             VkExtent2D size;
 
-            VkImage colorImage;
-            VkDeviceMemory colorImageMemory;
-            VkImageView colorImageView;
+            int colorAttachmentsCount;
+            bool enableDepthAttachment;
+
+            std::vector<__OffscreenImage> colorImages;
 
             VkImage depthImage;
             VkDeviceMemory depthImageMemory;
@@ -73,11 +76,11 @@ namespace VKFS {
             VkFramebuffer framebuffer;
             VkRenderPass renderPass;
             VkSampler sampler;
-            VkDescriptorImageInfo imageInfo;
+            VkDescriptorImageInfo depthImageInfo;
 
             std::vector<VkAttachmentDescription> attachments;
 
-            void createColorImage();
+            __OffscreenImage createColorImage();
             void createDepthImage();
             void createSampler();
 
