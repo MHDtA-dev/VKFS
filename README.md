@@ -2,7 +2,7 @@
 
 ![Logo](logo.PNG)
 
-## VKFS is a cross-platform and window system independ C++ framework that allows you to quickly create basic Vulkan objects for further work, such as Instance, Physical Device, Device, Command queues, Command buffer and synchronization objects.
+## VKFS is a cross-platform and window system independ C++ framework that allows you to quickly create basic Vulkan objects for further work, such as Instance, Physical Device, Device, Command queues, Command buffers, synchronization objects and many other useful things.
 
 #### The framework is fully working. If you notice a bug/missing functionality, write about it in issues tab. I will add new features as needed.
 
@@ -206,7 +206,7 @@ git clone https://github.com/MHDtA-dev/VKFS.git
 cd VKFS
 mkdir build
 cd build
-cmake -DVULKAN_INCLUDE_PATH=[Vulkan SDK include path] ..
+cmake ..
 make
 ```
 
