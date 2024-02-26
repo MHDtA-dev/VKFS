@@ -63,12 +63,12 @@ Example:
 
 ### Pipeline
 A simple abstraction over ```VkPipeline``` and ```VkPipelineLayout``` objects. Perfect for those who want 
-to get rid of the confusing boilerplate code and those who do not need a lot of settings
+to get rid of the confusing boilerplate code and those who do not need a lot of settings.
 
 Example:
 ```cpp
    auto pipeline = new VKFS::Pipeline(device, [vertexBindingDescription: VkVertexInputBindingDescription], [attributesDescription: std::vector<VkVertexInputAttributeDescription>],
-      [renderPass: VkRenderPass], [descriptors: std::vector<VKFS::Descriptor*>]);
+      [renderPass: VkRenderPass], [descriptors: std::vector<VKFS::Descriptor*>], [colorAttachmentCount = 1: int]);
 
    pipeline->addShader(VKFS::VERTEX, vertex);
    pipeline->addShader(VKFS::FRAGMENT, fragment);
@@ -94,6 +94,32 @@ You can also set some additional parameters(before ```pipeline->build();```):
    pipeline->setPolygonMode([mode: VKFS::PolygonMode]); // Changes polygon mode. VKFS::FILL by default
 ```
 
+### Offscreen renderer
+An object representing simple implementation of the offscreen renderer. Supports
+multiple color attachments(for example, if you need select bright fragment for bloom effect
+via two outputs of the fragment shader). You can also use it for shadow mapping(set
+color attachment count to 0 and enableDepthAttachment to true).
+
+Example:
+```cpp
+auto offscreenRenderer = VKFS::Offscreen(device, [synchronization: VKFS::Synchronization*], [colorAttachmentsCount: int], [enableDepthAttachment: bool], [width: int], [height: int], [imageFilter = OFFSCR_LINEAR: VKFS::OffscreenImageFilter]);
+```
+
+To begin renderpass just type:
+```cpp
+offscreenRenderer->beginRenderpass([clearColorR = 0: int], [clearColorG = 0: int], [clearColorB = 0: int], [clearColorA = 0: int]);
+
+... Your draw calls
+
+offscreenRenderer->endRenderpass();
+```
+
+To get VkDescriptorImageInfo of specified attachment, use:
+```cpp
+offscreenRenderer->getImageInfo([attachmentIndex = 0: int]);
+```
+
+If there no color attachments but depth attachment enabled, it returns descriptor image info to the depth attachment
 
 ### Vertex Buffer
 This object allows you to create a buffer of vertices and indices using your vertex structure
