@@ -113,11 +113,11 @@ void VKFS::Pipeline::build() {
         colorBlendAttachments[i].blendEnable = (alphaChannel ? VK_TRUE : VK_FALSE);
 
         if (alphaChannel) {
-            colorBlendAttachments[i].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-            colorBlendAttachments[i].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            colorBlendAttachments[i].srcColorBlendFactor = srcColorBlendFactor;
+            colorBlendAttachments[i].dstColorBlendFactor = dstColorBlendFactor;
             colorBlendAttachments[i].colorBlendOp = VK_BLEND_OP_ADD;
-            colorBlendAttachments[i].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-            colorBlendAttachments[i].dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            colorBlendAttachments[i].srcAlphaBlendFactor = srcAlphaBlendFactor;
+            colorBlendAttachments[i].dstAlphaBlendFactor = dstAlphaBlendFactor;
             colorBlendAttachments[i].alphaBlendOp = VK_BLEND_OP_ADD;
         }
     }
@@ -245,7 +245,22 @@ void VKFS::Pipeline::enableAlphaChannel(bool state) {
     alphaChannel = state;
 }
 
+void VKFS::Pipeline::setSrcColorBlendFactor(VkBlendFactor srcColorBlendFactor) {
+    Pipeline::srcColorBlendFactor = srcColorBlendFactor;
+}
+
+void VKFS::Pipeline::setDstColorBlendFactor(VkBlendFactor dstColorBlendFactor) {
+    Pipeline::dstColorBlendFactor = dstColorBlendFactor;
+}
+
+void VKFS::Pipeline::setSrcAlphaBlendFactor(VkBlendFactor srcAlphaBlendFactor) {
+    Pipeline::srcAlphaBlendFactor = srcAlphaBlendFactor;
+}
+
+void VKFS::Pipeline::setDstAlphaBlendFactor(VkBlendFactor dstAlphaBlendFactor) {
+    Pipeline::dstAlphaBlendFactor = dstAlphaBlendFactor;
+}
+
 VKFS::Pipeline::~Pipeline() {
     clearQueue.flush();
 }
-

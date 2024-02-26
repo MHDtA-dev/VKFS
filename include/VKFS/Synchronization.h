@@ -38,11 +38,17 @@ namespace VKFS {
             uint32_t getCurrentFrame();
 
             VkCommandBuffer getCommandBuffer();
+            VkCommandBuffer getComputeCommandBuffer();
 
             void resetAll();
+            void resetCompute();
+            void waitCompute();
+            void beginRecordingCompute();
+            void endRecordingCompute();
             void submit(uint32_t imageIndex);
             void beginRecordingCommands();
             void endRecordingCommands();
+            void submitCompute();
 
             void pushWindowSize(int width, int height);
 
@@ -56,7 +62,11 @@ namespace VKFS {
             std::vector<VkFence> inFlightFences;
             uint32_t currentFrame = 0;
 
+            std::vector<VkFence> computeInFlightFences;
+            std::vector<VkSemaphore> computeFinishedSemaphores;
+
             int windowWidth = -1, windowHeight = -1;
+            bool computeInUse = false;
     };
 
 }

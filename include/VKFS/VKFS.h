@@ -35,12 +35,18 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Pipeline.h"
 #include "Offscreen.h"
 #include "Image.h"
+#include "ComputePipeline.h"
+#include "StorageImage.h"
 
 namespace VKFS {
 
     uint32_t prepareFrame(Synchronization* sync);
     void begin(Synchronization* sync);
     void end(Synchronization* sync, uint32_t imageIndex);
+
+    void prepareCompute(Synchronization* sync);
+    void beginCompute(Synchronization* sync);
+    void endCompute(Synchronization* sync);
 }
 
 #endif //VKFS_VKFS_H

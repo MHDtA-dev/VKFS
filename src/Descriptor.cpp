@@ -236,3 +236,38 @@ VKFS::Descriptor::~Descriptor() {
     vkDeviceWaitIdle(device->getDevice());
     clearQueue.flush();
 }
+
+void VKFS::Descriptor::createStorageImageSet(VkDescriptorImageInfo imageInfo) {
+    std::vector<VkDescriptorSetLayout> layouts(2, descriptorSetLayout);
+    VkDescriptorSetAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = descriptorPool;
+    allocInfo.descriptorSetCount = static_cast<uint32_t>(2);
+    allocInfo.pSetLayouts = layouts.data();
+
+    descriptorSets.resize(2);
+    if (vkAllocateDescriptorSets(device->getDevice(), &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
+        throw std::runtime_error("[VKFS] Failed to allocate descriptor sets!");
+    }
+
+    clearQueue.push_function([=] () {
+        vkFreeDescriptorSets(device->getDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+    });
+
+    for (size_t i = 0; i < 2; i++) {
+        // Set the image layout to the desired layout (e.g., VK_IMAGE_LAYOUT_GENERAL)
+        imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+        std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = descriptorSets[i];
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pImageInfo = &imageInfo;
+
+        vkUpdateDescriptorSets(device->getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+    }
+}

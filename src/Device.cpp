@@ -67,6 +67,10 @@ VKFS::QueueFamilyIndices VKFS::Device::findQueueFamilies(VkPhysicalDevice device
             indices.graphicsFamily = i;
         }
 
+        if ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) && (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT)) {
+            indices.computeFamily = i;
+        }
+
         VkBool32 presentSupport = false;
         vkGetPhysicalDeviceSurfaceSupportKHR(device, i, instance->getSurface(), &presentSupport);
 
@@ -132,7 +136,7 @@ void VKFS::Device::createLogicalDevice() {
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value(), indices.computeFamily.value()};
 
     float queuePriority = 1.0f;
     for (uint32_t queueFamily : uniqueQueueFamilies) {
@@ -175,6 +179,7 @@ void VKFS::Device::createLogicalDevice() {
 
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+    vkGetDeviceQueue(device, indices.computeFamily.value(), 0, &computeQueue);
 }
 
 VkDevice VKFS::Device::getDevice() {
@@ -327,5 +332,9 @@ void VKFS::Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSi
 
 VKFS::Device::~Device() {
     clearQueue.flush();
+}
+
+VkQueue VKFS::Device::getComputeQueue() {
+    return computeQueue;
 }
 

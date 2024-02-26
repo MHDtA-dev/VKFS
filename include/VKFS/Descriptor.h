@@ -40,6 +40,7 @@ namespace VKFS {
             void createUBOSet(unsigned int sizeOf);
             void createStorageBufferSet(unsigned int sizeOf);
             void createSamplerSet(VkDescriptorImageInfo sampler);
+            void createStorageImageSet(VkDescriptorImageInfo imageInfo);
 
             void* getBufferForUpdate(Synchronization* sync);
             VkDescriptorSet getSet(Synchronization* sync);

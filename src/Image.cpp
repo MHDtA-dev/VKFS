@@ -268,7 +268,6 @@ VkImageView VKFS::Image::createImageView(VkImage image, VkFormat format, VkImage
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
 
-
     VkImageView imageView;
     if (vkCreateImageView(d->getDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
         throw std::runtime_error("[VKFS] Failed to create texture image view!");

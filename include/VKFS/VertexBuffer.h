@@ -27,6 +27,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <type_traits>
 #include "Device.h"
 #include "Synchronization.h"
+#include "__utils.h"
 
 
 namespace VKFS {
@@ -42,6 +43,10 @@ namespace VKFS {
 
                 createVertexBuffer();
                 createIndexBuffer();
+            }
+
+            ~VertexBuffer() {
+                clearQueue.flush();
             }
 
             VkBuffer getVertexBuffer() {
@@ -61,7 +66,7 @@ namespace VKFS {
                 this->pushConstantsShaderStage = shaderStage;
             }
 
-            void draw(Synchronization* sync, VkPipelineLayout layout, VkPipeline pipeline, VkExtent2D viewportSize) {
+            void draw(Synchronization* sync, VkPipelineLayout layout, VkPipeline pipeline, VkExtent2D viewportSize, int count = 1) {
                 vkCmdBindPipeline(sync->getCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
                 VkViewport viewport{};
@@ -92,7 +97,7 @@ namespace VKFS {
                     vkCmdPushConstants(sync->getCommandBuffer(), layout, pushConstantsShaderStage, 0, sizeof(PushConstantsStruct), &pushConstants);
                 }
 
-                vkCmdDrawIndexed(sync->getCommandBuffer(), static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+                vkCmdDrawIndexed(sync->getCommandBuffer(), static_cast<uint32_t>(indices.size()), count, 0, 0, 0);
                 layouts.clear();
             }
 
@@ -102,6 +107,8 @@ namespace VKFS {
             VkDeviceMemory vertexBufferMemory;
             VkBuffer indexBuffer;
             VkDeviceMemory indexBufferMemory;
+
+            ClearQueue clearQueue;
 
             PushConstantsStruct pushConstants;
             VkShaderStageFlagBits pushConstantsShaderStage;
@@ -126,6 +133,11 @@ namespace VKFS {
 
                 vkDestroyBuffer(device->getDevice(), stagingBuffer, nullptr);
                 vkFreeMemory(device->getDevice(), stagingBufferMemory, nullptr);
+
+                clearQueue.push_function([=] () {
+                    vkDestroyBuffer(device->getDevice(), vertexBuffer, nullptr);
+                    vkFreeMemory(device->getDevice(), vertexBufferMemory, nullptr);
+                });
             }
 
             void createIndexBuffer() {
@@ -146,6 +158,11 @@ namespace VKFS {
 
                 vkDestroyBuffer(device->getDevice(), stagingBuffer, nullptr);
                 vkFreeMemory(device->getDevice(), stagingBufferMemory, nullptr);
+
+                clearQueue.push_function([=] () {
+                    vkDestroyBuffer(device->getDevice(), indexBuffer, nullptr);
+                    vkFreeMemory(device->getDevice(), indexBufferMemory, nullptr);
+                });
             }
 
     };

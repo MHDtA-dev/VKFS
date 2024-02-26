@@ -48,6 +48,10 @@ namespace VKFS {
             void disableAttachment(Attachment att);
             void setPolygonMode(PolygonMode mode);
             void enableAlphaChannel(bool state);
+            void setSrcColorBlendFactor(VkBlendFactor srcColorBlendFactor);
+            void setDstColorBlendFactor(VkBlendFactor dstColorBlendFactor);
+            void setSrcAlphaBlendFactor(VkBlendFactor srcAlphaBlendFactor);
+            void setDstAlphaBlendFactor(VkBlendFactor dstAlphaBlendFactor);
             virtual void build();
 
             VkPipeline getPipeline();
@@ -86,6 +90,11 @@ namespace VKFS {
             bool alphaChannel = false;
 
             int colorAttachmentsCount = 0;
+
+            VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+            VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+            VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
     };
 
 }

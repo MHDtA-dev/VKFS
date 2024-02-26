@@ -18,3 +18,17 @@ void VKFS::end(Synchronization* sync, uint32_t imageIndex) {
     sync->endRecordingCommands();
     sync->submit(imageIndex);
 }
+
+void VKFS::prepareCompute(VKFS::Synchronization *sync) {
+    sync->waitCompute();
+}
+
+void VKFS::beginCompute(VKFS::Synchronization *sync) {
+    sync->resetCompute();
+    sync->beginRecordingCompute();
+}
+
+void VKFS::endCompute(VKFS::Synchronization *sync) {
+    sync->endRecordingCompute();
+    sync->submitCompute();
+}

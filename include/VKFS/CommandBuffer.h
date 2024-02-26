@@ -31,6 +31,7 @@ namespace VKFS {
         public:
             CommandBuffer(Device* device);
             std::vector<VkCommandBuffer> commandBuffers;
+            std::vector<VkCommandBuffer> computeBuffers;
         private:
             Device* device;
     };

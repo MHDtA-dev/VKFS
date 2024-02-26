@@ -33,9 +33,10 @@ namespace VKFS {
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
         std::optional<uint32_t> presentFamily;
+        std::optional<uint32_t> computeFamily;
 
         bool isComplete() {
-            return graphicsFamily.has_value() && presentFamily.has_value();
+            return graphicsFamily.has_value() && presentFamily.has_value() && computeFamily.has_value();
         }
     };
 
@@ -55,6 +56,7 @@ namespace VKFS {
 
             VkQueue getGraphicsQueue();
             VkQueue getPresentQueue();
+            VkQueue getComputeQueue();
             VkCommandPool getCommandPool();
 
             VkCommandBuffer beginSingleTimeCommands();
@@ -79,6 +81,7 @@ namespace VKFS {
 
             VkQueue graphicsQueue = nullptr;
             VkQueue presentQueue = nullptr;
+            VkQueue computeQueue = nullptr;
             VkCommandPool commandPool;
 
             void createLogicalDevice();

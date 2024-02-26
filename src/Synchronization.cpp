@@ -4,6 +4,9 @@ VKFS::Synchronization::Synchronization(VKFS::Device *device, VKFS::CommandBuffer
     imageAvailableSemaphores.resize(2);
     renderFinishedSemaphores.resize(2);
     inFlightFences.resize(2);
+    computeInFlightFences.resize(2);
+    computeFinishedSemaphores.resize(2);
+
 
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -15,7 +18,9 @@ VKFS::Synchronization::Synchronization(VKFS::Device *device, VKFS::CommandBuffer
     for (size_t i = 0; i < 2; i++) {
         if (vkCreateSemaphore(device->getDevice(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
             vkCreateSemaphore(device->getDevice(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
-            vkCreateFence(device->getDevice(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+            vkCreateFence(device->getDevice(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS ||
+                vkCreateSemaphore(device->getDevice(), &semaphoreInfo, nullptr, &computeFinishedSemaphores[i]) != VK_SUCCESS ||
+                vkCreateFence(device->getDevice(), &fenceInfo, nullptr, &computeInFlightFences[i]) != VK_SUCCESS) {
             throw std::runtime_error("[VKFS] Failed to create synchronization objects for a frame!");
         }
     }
@@ -57,11 +62,14 @@ void VKFS::Synchronization::submit(uint32_t imageIndex) {
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
+    VkSemaphore waitSemaphoresCompute[] = {imageAvailableSemaphores[currentFrame], computeFinishedSemaphores[currentFrame]};
     VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
+
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = waitSemaphores;
+    submitInfo.waitSemaphoreCount = computeInUse ? 2 : 1;
+    submitInfo.pWaitSemaphores = computeInUse ? waitSemaphoresCompute : waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
+    computeInUse = false;
 
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &cmd->commandBuffers[currentFrame];
@@ -119,4 +127,47 @@ uint32_t VKFS::Synchronization::getCurrentFrame() {
 void VKFS::Synchronization::pushWindowSize(int width, int height) {
     this->windowWidth = width;
     this->windowHeight = height;
+}
+
+void VKFS::Synchronization::submitCompute() {
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &cmd->computeBuffers[currentFrame];
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &computeFinishedSemaphores[currentFrame];
+
+    if (vkQueueSubmit(device->getComputeQueue(), 1, &submitInfo, computeInFlightFences[currentFrame]) != VK_SUCCESS) {
+        throw std::runtime_error("[VKFS] Failed to submit compute command buffer!");
+    };
+
+}
+
+void VKFS::Synchronization::resetCompute() {
+    vkResetFences(device->getDevice(), 1, &computeInFlightFences[currentFrame]);
+    vkResetCommandBuffer(getComputeCommandBuffer(), 0);
+}
+
+void VKFS::Synchronization::waitCompute() {
+    vkWaitForFences(device->getDevice(), 1, &computeInFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+}
+
+VkCommandBuffer VKFS::Synchronization::getComputeCommandBuffer() {
+    return cmd->computeBuffers[currentFrame];
+}
+
+void VKFS::Synchronization::beginRecordingCompute() {
+    computeInUse = true;
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+    if (vkBeginCommandBuffer(getComputeCommandBuffer(), &beginInfo) != VK_SUCCESS) {
+        throw std::runtime_error("[VKFS] Failed to begin recording compute command buffer!");
+    }
+}
+
+void VKFS::Synchronization::endRecordingCompute() {
+    if (vkEndCommandBuffer(getComputeCommandBuffer()) != VK_SUCCESS) {
+        throw std::runtime_error("[VKFS] Failed to record compute command buffer!");
+    }
 }
